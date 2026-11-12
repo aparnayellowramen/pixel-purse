@@ -1,12 +1,11 @@
 /**
- * App state store (M1-M2: saved in this browser).
- * Screens only use useAppState(), getState() and update(), so M3 can swap the
- * persistence for Supabase without touching the UI.
+ * App state store. Screens only use useAppState(), getState() and update().
+ * The state is cached in this browser, and sync.ts mirrors it to Supabase.
  */
 import { useSyncExternalStore } from "react";
-import { demoState } from "../domain/defaults";
-import { monthKeyOf } from "../domain/month";
-import type { AppState } from "../domain/types";
+import { DEFAULT_CATS, demoState } from "../domain/defaults";
+import { monthKeyOf, monthObj } from "../domain/month";
+import type { AppState, Category, HomeCurrency, User } from "../domain/types";
 
 const KEY = "pixel-purse-v1";
 
@@ -30,23 +29,52 @@ function persist() {
   }
 }
 
+function notify() {
+  listeners.forEach((l) => l());
+}
+
+/** A brand-new player who hasn't finished onboarding. */
+export function blankState(now = new Date()): AppState {
+  return {
+    v: 1,
+    started: false,
+    user: { guest: true },
+    currency: "CAD",
+    sound: false,
+    leftoverTo: "savings",
+    level: 1,
+    xp: 0,
+    streak: 0,
+    bestStreak: 0,
+    lastLogDay: -5,
+    month: monthObj(monthKeyOf(now), now.getDate()),
+    cats: structuredClone(DEFAULT_CATS),
+    adjust: {},
+    moves: [],
+    expenses: [],
+    chest: 0,
+    history: [],
+    rules: {},
+    noSpend: [],
+  };
+}
+
+/** Bring a saved state up to today: same month → update the day; month over → month end is due. */
+function refreshDate(s: AppState, now = new Date()): AppState {
+  const current = monthKeyOf(now);
+  if (s.month.key === current) s.month.day = now.getDate();
+  else if (s.month.key < current) {
+    s.month.day = s.month.days;
+    s.monthEndDue = true;
+  }
+  // A month after `current` only happens after "Simulate month end"; keep it as is.
+  return s;
+}
+
 function init() {
   if (state || typeof window === "undefined") return;
-  const now = new Date();
-  const current = monthKeyOf(now);
   const saved = load();
-  if (!saved) {
-    state = demoState(now);
-  } else {
-    if (saved.month.key === current) saved.month.day = now.getDate();
-    else if (saved.month.key < current) {
-      // The month ended while the app was closed: score it before anything else.
-      saved.month.day = saved.month.days;
-      saved.monthEndDue = true;
-    }
-    // A month after `current` only happens after "Simulate month end"; keep it as is.
-    state = saved;
-  }
+  state = saved ? refreshDate(saved) : blankState();
   persist();
 }
 
@@ -62,18 +90,41 @@ export function update(change: (draft: AppState) => void) {
   change(draft);
   state = draft;
   persist();
-  listeners.forEach((l) => l());
+  notify();
 }
 
-export function resetDemo() {
-  state = demoState(new Date());
+/** Replace everything (for example with the save file loaded from Supabase). */
+export function replaceState(next: AppState) {
+  state = refreshDate(structuredClone(next));
   persist();
-  listeners.forEach((l) => l());
+  notify();
 }
 
-function subscribe(l: () => void) {
+/** Onboarding finished: start the first month with these budgets. */
+export function newGame(currency: HomeCurrency, cats: Category[], user: User) {
+  const s = blankState();
+  s.currency = currency;
+  s.cats = cats;
+  s.user = user;
+  replaceState(s);
+}
+
+export function loadDemo() {
+  const d = demoState(new Date());
+  d.user = getState().user;
+  replaceState(d);
+}
+
+/** Forget everything on this device (after signing out). */
+export function clearLocal() {
+  replaceState(blankState());
+}
+
+export function subscribe(l: () => void) {
   listeners.add(l);
-  return () => listeners.delete(l);
+  return () => {
+    listeners.delete(l);
+  };
 }
 
 /** Null during server rendering and the first hydration pass. */

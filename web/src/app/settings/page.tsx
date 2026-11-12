@@ -1,19 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import { PixelIcon } from "@/components/pixel-icon";
+import { signOut } from "@/lib/auth";
 import { findCat } from "@/lib/domain/budget";
 import { sfx } from "@/lib/sound";
 import { deleteRule, setLeftoverTo, setSound } from "@/lib/store/actions";
-import { resetDemo } from "@/lib/store/app-store";
+import { loadDemo } from "@/lib/store/app-store";
 
 const titleCase = (s: string) => s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
 export default function SettingsPage() {
   const router = useRouter();
   const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
   return (
     <PageShell title="Settings">
       {(s) => {
@@ -62,7 +65,35 @@ export default function SettingsPage() {
 
             <section className="panel px set">
               <div className="lab">Account</div>
-              <p className="fine">Sign-in and saving your progress arrive in milestone 3. For now, your data is saved in this browser.</p>
+              {s.user.guest ? (
+                <>
+                  <p>Playing as guest. Your save file lives only on this phone.</p>
+                  <Link className="btn" href="/save-progress" style={{ textAlign: "center", textDecoration: "none" }}>
+                    Save your progress
+                  </Link>
+                </>
+              ) : confirmSignOut ? (
+                <>
+                  <p>Sign out? Your save file stays safe in your account. Sign in again with {s.user.email} to load it.</p>
+                  <div className="row">
+                    <button
+                      className="btn sm"
+                      onClick={async () => {
+                        await signOut();
+                        router.replace("/start");
+                      }}
+                    >
+                      Sign out
+                    </button>
+                    <button className="btn alt sm" onClick={() => setConfirmSignOut(false)}>Stay signed in</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p>Signed in as <b>{s.user.email}</b>. Your save file syncs to your account.</p>
+                  <button className="btn alt sm" onClick={() => setConfirmSignOut(true)}>Sign out</button>
+                </>
+              )}
             </section>
 
             <section className="panel px set proto">
@@ -70,13 +101,13 @@ export default function SettingsPage() {
               <button className="btn alt sm" onClick={() => router.push("/level")}>Simulate month end</button>
               {confirmReset ? (
                 <div className="row">
-                  <button className="btn danger sm" onClick={() => { resetDemo(); setConfirmReset(false); router.push("/"); }}>
-                    Reset everything
+                  <button className="btn danger sm" onClick={() => { loadDemo(); setConfirmReset(false); router.push("/"); }}>
+                    Replace with demo data
                   </button>
                   <button className="btn alt sm" onClick={() => setConfirmReset(false)}>Keep my data</button>
                 </div>
               ) : (
-                <button className="btn ghost" onClick={() => setConfirmReset(true)}>Reset to demo data</button>
+                <button className="btn ghost" onClick={() => setConfirmReset(true)}>Load demo data</button>
               )}
             </section>
           </>

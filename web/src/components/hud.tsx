@@ -33,9 +33,11 @@ export function Hud() {
   const { openRebalance } = useSheets();
   const router = useRouter();
   const monthEndDue = !!s?.monthEndDue;
+  const needsOnboarding = s !== null && !s.started;
   useEffect(() => {
-    if (monthEndDue) router.replace("/level");
-  }, [monthEndDue, router]);
+    if (needsOnboarding) router.replace("/start");
+    else if (monthEndDue) router.replace("/level");
+  }, [needsOnboarding, monthEndDue, router]);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState<Pending>(null);
   const [placeholder, setPlaceholder] = useState(0);
@@ -86,7 +88,7 @@ export function Hud() {
   );
   const close = useCallback(() => setPending(null), []);
 
-  if (!s) return <div className="device" aria-busy="true" />;
+  if (!s || needsOnboarding) return <div className="device" aria-busy="true" />;
 
   const left = totalLeft(s);
   const dl = daysLeft(s);

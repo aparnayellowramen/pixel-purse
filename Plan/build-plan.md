@@ -58,13 +58,18 @@ Each milestone ends with something you can open on your iPhone.
 - [x] Settings: sound (muted by default; sound effects pulled forward from M4), where leftovers go, rules, reset to demo data
 - [ ] Tap-through test on a real iPhone ← **your check**
 
-### M3 · Accounts and real data (Supabase)
-- [ ] Database tables and row-level security (users can only see their own data)
-- [ ] Anonymous guest account when the user taps Get started
-- [ ] Onboarding: currency, budgets, Create your save file (email code, Google), tutorial
-- [ ] Load your save (returning users), sign out, delete account
-- [ ] Supabase data store replaces the browser store
-- [ ] Rate limit of 100 AI parses a day per user
+### M3 · Accounts and real data (Supabase) · 🟡 mostly built 2026-11-12
+- [x] Database tables and row-level security: `supabase/migrations/0001_init.sql`. Verified that a user can't write someone else's save.
+- [x] Anonymous guest account when the user taps Get started
+- [x] Onboarding: currency, budgets, Create your save file (email code), Play as guest, tutorial
+- [x] Load your save (returning users) and sign out. "This email already has a save file" offers to load it.
+- [x] Save file synced to Supabase (browser keeps a cache, offline edits push later, the newer version wins if two devices conflict)
+- [x] AI route requires a signed-in user (guests count) and falls back to the rule parser after 100 parses a day
+- [x] End-to-end test `e2e/guest-flow.mjs`: 14 steps pass in headless Edge
+- [ ] Email code sign-in tested with a real inbox ← **needs the 3 email templates changed to show the code**
+- [ ] Google sign-in ← needs a Google Cloud OAuth client
+- [ ] Delete account (needs a small server function with admin rights)
+- [ ] Daily AI limit tested with a real Claude key
 
 ### M4 · iPhone polish
 - [ ] PWA: manifest, icons, splash screen, standalone mode, safe areas

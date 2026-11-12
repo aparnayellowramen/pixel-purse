@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import * as z from "zod";
 import { claudeAvailable, parseWithClaude } from "@/lib/parse/claude";
 import { parseEntry } from "@/lib/parse/rules";
+import { supabaseAsUser, supabaseConfigured } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
+
+/** AI parses allowed per user per day (PRD §8.4). After that, the rule parser takes over. */
+const DAILY_AI_LIMIT = 100;
 
 const Body = z.object({
   text: z.string().trim().min(1).max(200),
@@ -20,8 +24,6 @@ export async function POST(req: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   const input = parsed.data;
 
-  // TODO(M3): require a session and limit each user to 100 parses a day.
-
   const fallback = () =>
     parseEntry(input.text, {
       currency: input.currency,
@@ -31,6 +33,15 @@ export async function POST(req: Request) {
     });
 
   if (!claudeAvailable()) return NextResponse.json(fallback());
+
+  // Every AI call costs money, so it needs a signed-in user (guest accounts count) within the daily limit.
+  if (supabaseConfigured()) {
+    const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+    if (!token) return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+    const { data: count, error } = await supabaseAsUser(token).rpc("claim_parse");
+    if (error) return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+    if (typeof count === "number" && count > DAILY_AI_LIMIT) return NextResponse.json(fallback());
+  }
 
   try {
     return NextResponse.json(await parseWithClaude(input));

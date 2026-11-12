@@ -1,4 +1,5 @@
 import { isoDate } from "../domain/month";
+import { accessToken } from "../supabase/client";
 import type { AppState, ParseResult } from "../domain/types";
 import { applyMerchantRules, parseEntry } from "./rules";
 
@@ -15,9 +16,10 @@ export async function parseOnClient(text: string, s: AppState): Promise<ParseRes
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 12_000);
   try {
+    const token = await accessToken();
     const res = await fetch("/api/parse", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({
         text,
         currency: s.currency,

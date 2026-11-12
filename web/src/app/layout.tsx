@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Silkscreen } from "next/font/google";
 import { SheetsProvider } from "@/components/sheets";
+import { SyncBoot } from "@/components/sync-boot";
 import { ToastProvider } from "@/components/toast";
 import "./globals.css";
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${manrope.variable} ${silkscreen.variable}`}>
       <body>
         <ToastProvider>
+          <SyncBoot />
           <SheetsProvider>{children}</SheetsProvider>
         </ToastProvider>
       </body>
