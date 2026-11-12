@@ -94,6 +94,7 @@ export default function SettingsPage() {
                   <button className="btn alt sm" onClick={() => setConfirmSignOut(true)}>Sign out</button>
                 </>
               )}
+              <Link className="btn ghost danger-link" href="/delete-account">Delete account</Link>
             </section>
 
             <section className="panel px set proto">

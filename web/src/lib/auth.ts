@@ -84,6 +84,23 @@ export async function verifySignInCode(email: string, token: string): Promise<Au
   return { ok: true };
 }
 
+/* ---------- delete account ---------- */
+
+/** Permanently delete the account and its save file, then reset this device. */
+export async function deleteAccount(): Promise<AuthResult> {
+  const sb = client();
+  const { error } = await sb.rpc("delete_my_account");
+  if (error) {
+    return fail(/fetch|network/i.test(error.message) ? "offline" : "error", "Couldn't delete your account. Check your connection and try again.");
+  }
+  forgetSync();
+  // The session belongs to a user that no longer exists. The server answers this logout with 403,
+  // which supabase-js expects: it ignores it and clears the stored session anyway.
+  await sb.auth.signOut({ scope: "local" });
+  clearLocal();
+  return { ok: true };
+}
+
 /* ---------- sign out ---------- */
 
 export async function signOut() {

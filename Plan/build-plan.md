@@ -66,9 +66,9 @@ Each milestone ends with something you can open on your iPhone.
 - [x] Save file synced to Supabase (browser keeps a cache, offline edits push later, the newer version wins if two devices conflict)
 - [x] AI route requires a signed-in user (guests count) and falls back to the rule parser after 100 parses a day
 - [x] End-to-end test `e2e/guest-flow.mjs`: 14 steps pass in headless Edge
-- [ ] Email code sign-in tested with a real inbox ← **needs the 3 email templates changed to show the code**
+- [x] Email code sign-in tested with a real inbox (2026-11-12). Emails go through Resend's test sender `onboarding@resend.dev`, which only delivers to the Resend account's own email. **Before the beta:** own domain + verified sender in Resend.
 - [ ] Google sign-in ← needs a Google Cloud OAuth client
-- [ ] Delete account (needs a small server function with admin rights)
+- [x] Delete account with CSV export first and type-DELETE confirmation (`0002_delete_account.sql`, `e2e/delete-account.mjs` 7 steps pass)
 - [ ] Daily AI limit tested with a real Claude key
 
 ### M4 · iPhone polish
