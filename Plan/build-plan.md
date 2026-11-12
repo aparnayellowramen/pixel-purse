@@ -82,6 +82,11 @@ Each milestone ends with something you can open on your iPhone.
 - [x] Real iPhone test (2026-11-12): installed from Safari, opens full screen, loaded the save file with an email code, logged an expense, worked in Airplane mode, synced back to the PC
 - [ ] VoiceOver pass and contrast check on a real iPhone
 
+### Added from real use (2026-11-12)
+- [x] Editable categories: rename, add, remove, change amount and icon, in onboarding and Settings → Budgets. Removing a category with expenses asks where to move them; renamed categories keep keyword matching (stable ids). `e2e/budgets.mjs` 8 steps pass, 6 new unit tests.
+- [x] Main screen shows the date clearly ("Thursday, November 12 · 19 days left in November")
+- [x] Savings/debt goals always listed last; long category names wrap
+
 ### M5 · Beta
 - [x] Deploy to Vercel: **https://pixel-purse-two.vercel.app** (2026-11-12). Root directory `web`, auto-deploys on every push to `main`. All 4 browser test suites pass against the live site.
 - [ ] Analytics events for the PRD §11 metrics (PostHog)

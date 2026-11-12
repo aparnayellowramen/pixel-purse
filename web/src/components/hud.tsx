@@ -27,6 +27,12 @@ const EXAMPLES = [
 ];
 const PLACEHOLDERS = ["coffee 4 at tim hortons", "uber 18", "groceries 62 nofrills", "lunch 15 and uber 22"];
 
+/** "Thursday, November 12" for a day of a "YYYY-MM" month. */
+function todayLabel(key: string, day: number) {
+  const [y, m] = key.split("-").map(Number);
+  return new Date(y, m - 1, day).toLocaleDateString("en", { weekday: "long", month: "long", day: "numeric" });
+}
+
 export function Hud() {
   const s = useAppState();
   const toast = useToast();
@@ -119,9 +125,14 @@ export function Hud() {
         </header>
 
         <div className="scroll">
-          <div className="lvlrow d">
-            <span>{s.month.name.toUpperCase()} · DAY {s.month.day}/{s.month.days}</span>
-            <span className="combo">COMBO ×{s.streak}</span>
+          <div className="today-row">
+            <div>
+              <div className="today-date">{todayLabel(s.month.key, s.month.day)}</div>
+              <div className="today-left">
+                {dl === 1 ? "Last day of the month" : `${dl} days left in ${s.month.name}`} · day {s.month.day} of {s.month.days}
+              </div>
+            </div>
+            <span className="combo d" aria-label={`Combo: ${s.streak} days in a row`}>COMBO ×{s.streak}</span>
           </div>
 
           <section className="panel px leftp">
@@ -135,7 +146,7 @@ export function Hud() {
           </section>
 
           <section className="bars" aria-label="Budgets">
-            {s.cats.map((c) => {
+            {[...s.cats.filter((c) => !c.debt), ...s.cats.filter((c) => c.debt)].map((c) => {
               const b = barState(s, c);
               return (
                 <div className="barrow" key={c.id} aria-label={`${c.name}: ${b.text}`}>

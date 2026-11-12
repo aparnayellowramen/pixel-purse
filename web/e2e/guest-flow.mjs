@@ -41,7 +41,7 @@ await step("pick a currency", async () => {
   await page.getByRole("heading", { name: "Set your monthly budgets" }).waitFor();
 });
 await step("set budgets", async () => {
-  await page.getByLabel("Food", { exact: true }).fill("450");
+  await page.locator("#lim-food").fill("450");
   await text("CA$1,550");
   await page.getByRole("button", { name: "Next", exact: true }).click();
   await page.getByRole("heading", { name: "Create your save file" }).waitFor();

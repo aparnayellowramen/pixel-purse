@@ -2,7 +2,8 @@ import { findCat, limitOf, remaining, spentIn, usedRatio } from "../domain/budge
 import { newId } from "../domain/defaults";
 import { fmt, fmt0, round2, symbolFor } from "../domain/money";
 import { applyLevel, type LevelResult } from "../domain/month-end";
-import type { AppState, CategoryId, Expense, ParsedItem } from "../domain/types";
+import { applyCategoryChanges } from "../domain/categories";
+import type { AppState, Category, CategoryId, Expense, ParsedItem } from "../domain/types";
 import { getState, update } from "./app-store";
 
 export const XP_PER_LEVEL = 500;
@@ -196,6 +197,12 @@ export function takeFromChest(to: CategoryId): number {
     d.moves.push({ from: "chest", to, amt });
   });
   return amt;
+}
+
+/* ---------- budgets ---------- */
+
+export function saveCategories(next: Category[], moveTo: Record<CategoryId, CategoryId>) {
+  update((s) => applyCategoryChanges(s, next, moveTo));
 }
 
 /* ---------- settings ---------- */

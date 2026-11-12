@@ -274,6 +274,32 @@ a.btn{display:block}
 .empty-icon{width:64px;height:64px;color:var(--muted);align-self:center}
 .btn.ghost.danger-link{color:var(--bad);text-align:center}
 
+/* Long category names wrap instead of being cut off */
+.bars .bn{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
+
+/* Main screen date */
+.today-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:2px 2px 0}
+.today-date{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.today-left{font-size:13px;color:var(--muted)}
+.today-row .combo{font-size:10px;padding-top:5px;white-space:nowrap}
+
+/* Category editor */
+.catrow+.catrow{border-top:1px solid var(--line)}
+.catrow .limrow{border-top:0;padding:10px 0}
+.catrow:first-child .limrow{padding-top:0}
+.iconpick{flex:none;border:0;background:none;padding:0;cursor:pointer;border-radius:9px}
+.iconpick .spr{width:34px;height:34px;padding:8px;background:var(--surface-2);border-radius:9px}
+.catname{width:100%;min-width:0;border:0;border-bottom:1.5px dashed var(--line);background:transparent;padding:4px 0;font-size:16px;font-weight:600}
+.catname:focus{outline:none;border-bottom-color:var(--accent)}
+.amt{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:12px;flex:none}
+.amt .limin{width:66px;padding:9px 8px}
+.catrow .limrow{gap:8px}
+.rm{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:var(--surface-2);color:var(--muted);cursor:pointer;font-size:13px}
+.rm:hover{color:var(--bad)}
+.icons{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 12px}
+.icons .cchip{padding:8px}
+.icons .cchip .spr{width:16px;height:16px}
+
 /* M4: offline note, install guide */
 .offline-note{position:fixed;left:50%;transform:translateX(-50%);top:calc(8px + env(safe-area-inset-top,0px));z-index:50;max-width:calc(100% - 24px);background:var(--warn);color:#1c1400;font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;box-shadow:var(--shadow-lg);text-align:center}
 .install-steps{display:flex;flex-direction:column;gap:14px}

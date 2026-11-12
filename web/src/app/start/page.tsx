@@ -3,13 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthForm, type AuthMode } from "@/components/auth-form";
+import { CategoryEditor, toCategories, toRows, type CategoryRow } from "@/components/category-editor";
+import { categoryProblems } from "@/lib/domain/categories";
 import { PixelIcon } from "@/components/pixel-icon";
 import { useToast } from "@/components/toast";
 import { startAsGuest } from "@/lib/auth";
 import { shouldShowInstallGuide } from "@/lib/pwa";
 import { DEFAULT_CATS } from "@/lib/domain/defaults";
 import { CURRENCY_NAME, CURRENCY_SYMBOL } from "@/lib/domain/money";
-import { CURRENCIES, type Category, type HomeCurrency } from "@/lib/domain/types";
+import { CURRENCIES, type HomeCurrency } from "@/lib/domain/types";
 import { getState, newGame, update, useAppState } from "@/lib/store/app-store";
 
 type Step = "install" | "title" | "currency" | "budgets" | "save" | "tutorial" | "signin";
@@ -37,7 +39,8 @@ export default function StartPage() {
   // In iPhone Safari, install first: Safari and the Home Screen app keep separate saves (sign-in-flow.md §2).
   const [step, setStep] = useState<Step>(() => (shouldShowInstallGuide() ? "install" : "title"));
   const [currency, setCurrency] = useState<HomeCurrency>("CAD");
-  const [cats, setCats] = useState<Category[]>(() => structuredClone(DEFAULT_CATS));
+  const [rows, setRows] = useState<CategoryRow[]>(() => toRows(DEFAULT_CATS));
+  const [problems, setProblems] = useState<string[]>([]);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -49,7 +52,7 @@ export default function StartPage() {
 
   if (!s) return <div className="device" aria-busy="true" />;
   const sym = CURRENCY_SYMBOL[currency];
-  const total = cats.filter((c) => !c.debt).reduce((a, c) => a + (c.limit || 0), 0);
+  const total = toCategories(rows).filter((c) => !c.debt).reduce((a, c) => a + c.limit, 0);
 
   const getStarted = async () => {
     setBusy(true);
@@ -61,7 +64,11 @@ export default function StartPage() {
   };
 
   const finishBudgets = () => {
-    newGame(currency, cats.map((c) => ({ ...c, limit: Math.max(0, Math.round(c.limit || 0)) })), { guest: true });
+    const cats = toCategories(rows).map((c) => ({ ...c, name: c.name.trim() }));
+    const p = categoryProblems(cats);
+    setProblems(p);
+    if (p.length) return;
+    newGame(currency, cats, { guest: true });
     setStep("save");
   };
 
@@ -150,30 +157,13 @@ export default function StartPage() {
               <>
                 <Steps n={2} />
                 <h2 className="h">Set your monthly budgets</h2>
-                <p className="sub">A monthly budget for each category. Change any amount.</p>
-                <section className="panel px">
-                  {cats.map((c, i) => (
-                    <div className="limrow" key={c.id}>
-                      <PixelIcon name={c.icon} />
-                      <label className="ln" htmlFor={`lim-${c.id}`}>
-                        {c.name}
-                        {c.debt && <small>Planned payment. Never used for rebalancing.</small>}
-                      </label>
-                      <input
-                        className="limin"
-                        id={`lim-${c.id}`}
-                        inputMode="decimal"
-                        value={c.limit || ""}
-                        placeholder="0"
-                        onChange={(e) => {
-                          const v = parseFloat(e.target.value.replace(",", ".")) || 0;
-                          setCats((prev) => prev.map((x, j) => (j === i ? { ...x, limit: v } : x)));
-                        }}
-                      />
-                    </div>
-                  ))}
-                </section>
+                <p className="sub">
+                  A monthly budget for each category. Rename, add or remove any of them. Leave out fixed bills like rent so your daily pace only
+                  covers everyday spending.
+                </p>
+                <CategoryEditor rows={rows} onChange={(r) => { setRows(r); setProblems([]); }} currency={currency} />
                 <p className="sub">Spending budget: <b style={{ color: "var(--ink)" }}>{sym}{total.toLocaleString("en-US")}</b> / month</p>
+                {problems.map((p) => <p className="err" key={p}>{p}</p>)}
                 <button className="btn" onClick={finishBudgets}>Next</button>
               </>
             )}

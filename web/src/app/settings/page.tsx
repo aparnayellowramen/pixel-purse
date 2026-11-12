@@ -33,6 +33,17 @@ export default function SettingsPage() {
               <p className="fine">Muted by default, because people log in public.</p>
             </section>
 
+            <section className="panel px set">
+              <div className="lab">Budgets</div>
+              <p className="fine">
+                {s.cats.length} categories ·{" "}
+                {s.cats.filter((c) => !c.debt).reduce((a, c) => a + c.limit, 0).toLocaleString("en-US")} {s.currency} a month for spending
+              </p>
+              <Link className="btn alt sm" href="/budgets" style={{ textAlign: "center", textDecoration: "none" }}>
+                Edit budgets and categories
+              </Link>
+            </section>
+
             <ReminderSettings />
 
             <section className="panel px set">
