@@ -1,0 +1,9 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets, anywhere in the repo
+.env*
+!.env.example
