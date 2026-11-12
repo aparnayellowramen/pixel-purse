@@ -20,6 +20,37 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Daily reminder arrives from the server.
+self.addEventListener("push", (event) => {
+  let msg = { title: "Pixel Purse", body: "Logged today's spending?", url: "/" };
+  try {
+    msg = { ...msg, ...event.data.json() };
+  } catch {
+    /* plain text or empty push: use the default */
+  }
+  event.waitUntil(
+    self.registration.showNotification(msg.title, {
+      body: msg.body,
+      icon: "/icon-192",
+      badge: "/icon-192",
+      tag: "daily-reminder", // a newer reminder replaces an older one instead of stacking
+      data: { url: msg.url },
+    }),
+  );
+});
+
+// Tapping the notification opens the app (or focuses it if it's already open).
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = new URL(event.notification.data?.url || "/", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
+      const open = wins.find((w) => w.url.startsWith(self.location.origin));
+      return open ? open.focus().then((w) => w && w.navigate(url)) : self.clients.openWindow(url);
+    }),
+  );
+});
+
 // The page sends the files it already loaded, so they're cached from the first visit.
 self.addEventListener("message", (event) => {
   if (event.data?.type !== "precache" || !Array.isArray(event.data.urls)) return;

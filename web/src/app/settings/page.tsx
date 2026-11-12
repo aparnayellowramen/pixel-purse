@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import { PixelIcon } from "@/components/pixel-icon";
+import { ReminderSettings } from "@/components/reminder-settings";
 import { signOut } from "@/lib/auth";
 import { findCat } from "@/lib/domain/budget";
 import { sfx } from "@/lib/sound";
@@ -31,6 +32,8 @@ export default function SettingsPage() {
               </div>
               <p className="fine">Muted by default, because people log in public.</p>
             </section>
+
+            <ReminderSettings />
 
             <section className="panel px set">
               <div className="lab">Send leftovers to</div>

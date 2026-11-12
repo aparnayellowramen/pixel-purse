@@ -75,12 +75,15 @@ Each milestone ends with something you can open on your iPhone.
 - [x] PWA: manifest, pixel-coin icons (generated in code), standalone mode, status bar, safe areas
 - [x] Install guide on iPhone Safari, shown before onboarding (`e2e/install-guide.mjs`)
 - [x] Offline: service worker caches the app (production builds only), "Offline" note, expenses logged offline are saved straight away with keyword matching and synced on reconnect (`e2e/offline.mjs`, 6 steps pass). See PRD decision #11.
-- [ ] Daily reminders: web push for installed apps, email for everyone else ← **after M5 deploy** (iPhone web push needs the app on HTTPS)
+- [x] Daily reminders (web push): Settings → Daily reminder with a time, skipped on days already logged, Supabase pg_cron calls `/api/reminders/send` every 15 min (`0003_reminders.sql` + one-time setup). Sender and secret checks tested; error handling tested in a browser.
+- [ ] Reminder push tested on a real iPhone ← **needs the Vercel deploy**
+- [ ] Email reminders for people who don't allow notifications ← needs your own email domain
 - [x] Sounds (Web Audio, muted by default), Reduce Motion
+- [x] Real iPhone test (2026-11-12): installed from Safari, opens full screen, loaded the save file with an email code, logged an expense, worked in Airplane mode, synced back to the PC
 - [ ] VoiceOver pass and contrast check on a real iPhone
 
 ### M5 · Beta
-- [ ] Deploy to Vercel with a production Supabase project
+- [x] Deploy to Vercel: **https://pixel-purse-two.vercel.app** (2026-11-12). Root directory `web`, auto-deploys on every push to `main`. All 4 browser test suites pass against the live site.
 - [ ] Analytics events for the PRD §11 metrics (PostHog)
 - [ ] Measure AI accuracy on the 100-entry test set (target: 95% or better)
 - [ ] 10 beta users for 2+ weeks, then fix what they find
