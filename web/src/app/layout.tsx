@@ -11,6 +11,10 @@ const silkscreen = Silkscreen({ variable: "--font-silkscreen", subsets: ["latin"
 export const metadata: Metadata = {
   title: "Pixel Purse",
   description: "Type what you spend. Keep your bars alive.",
+  applicationName: "Pixel Purse",
+  // Opened from the iPhone Home Screen: full screen, content runs under the status bar.
+  appleWebApp: { capable: true, title: "Pixel Purse", statusBarStyle: "black-translucent" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {

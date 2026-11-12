@@ -71,12 +71,13 @@ Each milestone ends with something you can open on your iPhone.
 - [x] Delete account with CSV export first and type-DELETE confirmation (`0002_delete_account.sql`, `e2e/delete-account.mjs` 7 steps pass)
 - [ ] Daily AI limit tested with a real Claude key
 
-### M4 · iPhone polish
-- [ ] PWA: manifest, icons, splash screen, standalone mode, safe areas
-- [ ] Install guide on iPhone Safari (shown before onboarding)
-- [ ] Offline queue: expenses typed offline are parsed when the phone reconnects
-- [ ] Daily reminders: web push for installed apps, email for everyone else
-- [ ] Sounds (Web Audio), Reduce Motion, VoiceOver labels, contrast check
+### M4 · iPhone polish · 🟡 core built 2026-11-12
+- [x] PWA: manifest, pixel-coin icons (generated in code), standalone mode, status bar, safe areas
+- [x] Install guide on iPhone Safari, shown before onboarding (`e2e/install-guide.mjs`)
+- [x] Offline: service worker caches the app (production builds only), "Offline" note, expenses logged offline are saved straight away with keyword matching and synced on reconnect (`e2e/offline.mjs`, 6 steps pass). See PRD decision #11.
+- [ ] Daily reminders: web push for installed apps, email for everyone else ← **after M5 deploy** (iPhone web push needs the app on HTTPS)
+- [x] Sounds (Web Audio, muted by default), Reduce Motion
+- [ ] VoiceOver pass and contrast check on a real iPhone
 
 ### M5 · Beta
 - [ ] Deploy to Vercel with a production Supabase project

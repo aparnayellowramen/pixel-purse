@@ -6,12 +6,21 @@ import { AuthForm, type AuthMode } from "@/components/auth-form";
 import { PixelIcon } from "@/components/pixel-icon";
 import { useToast } from "@/components/toast";
 import { startAsGuest } from "@/lib/auth";
+import { shouldShowInstallGuide } from "@/lib/pwa";
 import { DEFAULT_CATS } from "@/lib/domain/defaults";
 import { CURRENCY_NAME, CURRENCY_SYMBOL } from "@/lib/domain/money";
 import { CURRENCIES, type Category, type HomeCurrency } from "@/lib/domain/types";
 import { getState, newGame, update, useAppState } from "@/lib/store/app-store";
 
-type Step = "title" | "currency" | "budgets" | "save" | "tutorial" | "signin";
+type Step = "install" | "title" | "currency" | "budgets" | "save" | "tutorial" | "signin";
+
+/** The iOS Share icon (a box with an arrow), drawn inline so it matches the system one. */
+const ShareGlyph = () => (
+  <svg className="share-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3v12M7 8l5-5 5 5" />
+    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+  </svg>
+);
 
 function Steps({ n }: { n: number }) {
   return (
@@ -25,7 +34,8 @@ export default function StartPage() {
   const s = useAppState();
   const router = useRouter();
   const toast = useToast();
-  const [step, setStep] = useState<Step>("title");
+  // In iPhone Safari, install first: Safari and the Home Screen app keep separate saves (sign-in-flow.md §2).
+  const [step, setStep] = useState<Step>(() => (shouldShowInstallGuide() ? "install" : "title"));
   const [currency, setCurrency] = useState<HomeCurrency>("CAD");
   const [cats, setCats] = useState<Category[]>(() => structuredClone(DEFAULT_CATS));
   const [err, setErr] = useState("");
@@ -34,7 +44,7 @@ export default function StartPage() {
   // Someone who already finished onboarding belongs on the main screen.
   const done = !!s?.started;
   useEffect(() => {
-    if (done && step === "title") router.replace("/");
+    if (done && (step === "title" || step === "install")) router.replace("/");
   }, [done, step, router]);
 
   if (!s) return <div className="device" aria-busy="true" />;
@@ -92,7 +102,31 @@ export default function StartPage() {
           </div>
         )}
 
-        {step !== "title" && (
+        {step === "install" && (
+          <div className="scroll">
+            <div className="logo" style={{ marginTop: "4vh" }}>
+              <PixelIcon name="coin" />
+            </div>
+            <h2 className="h" style={{ textAlign: "center" }}>Add Pixel Purse to your Home Screen</h2>
+            <p className="sub" style={{ textAlign: "center" }}>
+              It opens full screen like a real app, and your save file lives in the app instead of in Safari.
+            </p>
+            <section className="panel px">
+              <ol className="install-steps" style={{ margin: 0, padding: 0 }}>
+                <li><span className="num">1</span><span>Tap <b>Share</b> <ShareGlyph /> in Safari&apos;s toolbar</span></li>
+                <li><span className="num">2</span><span>Scroll down and tap <b>Add to Home Screen</b></span></li>
+                <li><span className="num">3</span><span>Tap <b>Add</b>, then open <b>Pixel Purse</b> from your Home Screen</span></li>
+              </ol>
+            </section>
+            <p className="fine" style={{ textAlign: "center" }}>
+              Safari and the Home Screen app keep separate saves, so start in the app.
+            </p>
+            <div style={{ flex: 1 }} />
+            <button className="btn ghost" onClick={() => setStep("title")}>Continue in Safari instead</button>
+          </div>
+        )}
+
+        {step !== "title" && step !== "install" && (
           <div className="scroll">
             {step === "currency" && (
               <>

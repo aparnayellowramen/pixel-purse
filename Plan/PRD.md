@@ -363,6 +363,7 @@ Receipt photo scanning (the AI reads the receipt) · voice logging with Siri Sho
 | 8 | Show the Savings total on the HUD all the time? | **Yes.** The treasure chest total is always in the HUD header. |
 | 9 | Full Overview history for free? | **Yes.** All past months, no limits. |
 | 10 | Visual style? | **Modern + pixel accents** (§6.1), chosen over the full dark pixel-arcade look after testing both prototypes. |
+| 11 | What happens to expenses typed offline? | **Saved immediately with keyword matching** (shown as "Offline · basic matching") and synced on reconnect, instead of waiting in a queue for the AI. Logging never waits on the network; the user can fix a category in one tap. |
 
 **Why there's still an account behind the scenes (decision 6):**
 1. **Data safety on iPhone.** Safari can delete data stored only on the phone, especially for web apps that haven't been opened in a while. Months of history, which the Overview depends on, would be lost.
