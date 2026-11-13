@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pixel Purse: the app
 
-## Getting Started
+The Next.js app behind [Pixel Purse](../README.md). Live at **https://pixel-purse-two.vercel.app**.
 
-First, run the development server:
+## Run it locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd web
+npm install
+cp .env.example .env.local   # then fill in the values below
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Needed for | Without it |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Accounts and sync | "Get started" can't create an account |
+| `ANTHROPIC_API_KEY` | AI parsing with Claude | Entries are parsed with keyword matching |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Push reminders | Reminders can't be turned on |
+| `CRON_SECRET` | The scheduled reminder sender | `/api/reminders/send` refuses every call |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Generate push keys with `npx web-push generate-vapid-keys`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Database
 
-## Learn More
+In a new Supabase project, run the files in [`supabase/migrations`](supabase/migrations) in order in the SQL Editor. Then switch on **anonymous sign-ins**, and set the email templates to show `{{ .Token }}` (a 6-digit code). Reminders also need `pg_cron` and `pg_net`, a `cron_secret` row in `private.settings`, and a cron job that POSTs to `/api/reminders/send` every 15 minutes with that secret. See the comments in `0003_reminders.sql`.
 
-To learn more about Next.js, take a look at the following resources:
+## Checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run check                 # type check + lint + unit tests
+node e2e/guest-flow.mjs       # browser tests (need the dev server and Microsoft Edge)
+node e2e/budgets.mjs
+node e2e/install-guide.mjs
+node e2e/delete-account.mjs
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Offline and reminder tests need a production build (the service worker is off in development):
 
-## Deploy on Vercel
+```bash
+$env:NEXT_DIST_DIR=".next-prod"; npm run build; npx next start --port 3100
+$env:BASE_URL="http://localhost:3100"; node e2e/offline.mjs; node e2e/reminders.mjs
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Set `BASE_URL` to run any browser test against the live site. Each run creates a throwaway guest account.

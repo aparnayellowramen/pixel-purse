@@ -1,6 +1,6 @@
 # Build plan
 
-**Parent docs:** [PRD.md](PRD.md) · [sign-in-flow.md](sign-in-flow.md) · **Design reference:** [modern prototype](https://claude.ai/artifact/G4V4iEr2tfkjsuLYqS8EQ8)
+**Parent docs:** [PRD.md](PRD.md) · [sign-in-flow.md](sign-in-flow.md) · **Design reference:** [modern prototype](../docs/screenshots/prototype-modern.png)
 **Started:** 2026-11-11 · **Code lives in:** `web/`
 
 ---

@@ -72,8 +72,8 @@ A manual-entry spending tracker that works like a calorie counter, wrapped in an
 ### 6.1 Concept
 **Decided (after comparing two prototypes): a clean, modern app with pixel accents.** The base is a readable, modern interface with rounded cards, a clear sans-serif font and soft shadows, in both light and dark mode. The game feel comes from small, deliberate touches: original pixel icons, segmented "HP" budget bars, pixel-font labels for level, combo and section titles, coins, stars and the treasure chest. The game theme still carries the core idea: **each budget is a health bar, spending does damage, and the month is a level you're trying to finish.** It just doesn't make the whole app look like a game.
 
-- Chosen prototype: https://claude.ai/artifact/G4V4iEr2tfkjsuLYqS8EQ8
-- Rejected alternative (full dark pixel-arcade look): https://claude.ai/artifact/JwMHcTVUGsCEqqAY1nQnmo. It was more distinctive but harder to read, and less reassuring for a money app.
+- Chosen prototype: [screenshot](../docs/screenshots/prototype-modern.png)
+- Rejected alternative (full dark pixel-arcade look): [screenshot](../docs/screenshots/prototype-arcade.png). It was more distinctive but harder to read, and less reassuring for a money app.
 
 > **Rule:** all art, characters, sounds and names are original. We draw on the *genre* (pixel art, chiptune, HUD-style screens) and never copy a specific game's characters, sprites, music or branding.
 
