@@ -4,6 +4,14 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Launch video: rendered intermediates (regenerate with brag-output/work/build.mjs + music.mjs)
+brag-output/work/frames/
+brag-output/work/stills/
+brag-output/work/*.wav
+brag-output/work/*.png
+brag-output/work/*.jpg
+brag-output/work/composition.html
+
 # Secrets, anywhere in the repo
 .env*
 !.env.example

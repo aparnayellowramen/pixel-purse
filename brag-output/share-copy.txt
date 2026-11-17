@@ -1,0 +1,3 @@
+I built a budget app where your budgets are health bars. Type "coffee 4 at tim hortons" and Food takes the hit; go over, and you cover it from another bar instead of feeling bad about it.
+
+Pixel Purse: installs on iPhone, works offline. Try it at pixel-purse-two.vercel.app
