@@ -3,6 +3,12 @@
 **A spending tracker you log in plain language, with budgets as health bars.**
 Type *"coffee CA$ 4 at tim hortons"* and it's filed under Food. Go over budget and it helps you cover it instead of shaming you. Built and shipped as a side project, from the first PRD to an app installed on my iPhone.
 
+
+
+https://github.com/user-attachments/assets/f2248559-dbfd-477b-97ea-482dfcad638b
+
+
+
 **[Try it live →](https://pixel-purse-two.vercel.app)** &nbsp;·&nbsp; On iPhone, open it in Safari and *Add to Home Screen*. To explore with sample history, tap **Get started**, then **Settings → Load demo data**.
 
 <p align="center">
